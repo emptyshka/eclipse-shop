@@ -26,7 +26,7 @@ const products = [
     }
 ];
 
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 const buttons = document.querySelectorAll(".add-to-cart");
 
@@ -56,7 +56,11 @@ buttons.forEach(button => {
 
 const cartItems = document.querySelector("#cart-items");
 
+renderCart();
+
 function renderCart() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+    
     cartItems.innerHTML = "";
 
     cart.forEach(product => {
