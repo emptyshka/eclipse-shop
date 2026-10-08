@@ -11,12 +11,12 @@ const products = [
     },
     {
         id: 3,
-        name: "Футболка ECLIPSE",
+        name: "Худи ECLIPSE",
         price: 2990
     },
     {
         id: 4,
-        name: "Трусы ECLIPSE",
+        name: "Кепка ECLIPSE",
         price: 1660
     },
     {
@@ -125,4 +125,37 @@ orderForm.addEventListener("submit", event => {
     renderCart();
 
     orderForm.reset();
+});
+
+const colorButtons = document.querySelectorAll(".color-button");
+
+colorButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        const productCard = button.closest(".product-card");
+        const image = productCard.querySelector("img");
+        const color = button.dataset.color;
+
+        const imageNames = {
+            1: {
+                black: "windbreaker_black.PNG",
+                grey: "windbreaker_grey.PNG"
+            },
+            2: {
+                black: "pants_black.PNG",
+                grey: "pants_grey.PNG"
+            },
+            3: {
+                black: "hoodie_black.PNG",
+                grey: "hoodie_grey.PNG"
+            },
+            4: {
+                black: "cap_black.PNG",
+                grey: "cap_grey.PNG"
+            }
+        };
+
+        const productId = productCard.dataset.id;
+
+        image.src = `eclipse_images/${imageNames[productId][color]}`;
+    });
 });
