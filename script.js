@@ -37,13 +37,18 @@ buttons.forEach(button => {
 
         const product = products.find(item => item.id === productId);
 
-        const existingProduct = cart.find(item => item.id === productId);
+        const selectedColor = productCard.querySelector(".color-button.active")?.dataset.color || "grey";
+
+        const existingProduct = cart.find(
+            item => item.id === productId && item.color === selectedColor
+        );
 
         if (existingProduct) {
             existingProduct.quantity += 1;
         } else {
             cart.push({
                 ...product,
+                color: selectedColor,
                 quantity: 1
             });
         }
@@ -69,6 +74,7 @@ function renderCart() {
 
         item.innerHTML = `
             <p>${product.name}</p>
+            ${product.color ? `<p>Цвет: ${product.color === "black" ? "чёрный" : "серый"}</p>` : ""}
             <p>${product.price} ₽ × ${product.quantity}</p>
 
             <button class="decrease" data-id="${product.id}">−</button>
@@ -128,12 +134,23 @@ orderForm.addEventListener("submit", event => {
 });
 
 const colorButtons = document.querySelectorAll(".color-button");
+colorButtons.forEach(button => {
+    if (button.dataset.color === "grey") {
+        button.classList.add("active");
+    }
+});
 
 colorButtons.forEach(button => {
     button.addEventListener("click", () => {
         const productCard = button.closest(".product-card");
         const image = productCard.querySelector("img");
         const color = button.dataset.color;
+        const buttons = productCard.querySelectorAll(".color-button");
+        buttons.forEach(item => {
+            item.classList.remove("active");
+        });
+
+        button.classList.add("active");
 
         const imageNames = {
             1: {
