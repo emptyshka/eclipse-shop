@@ -60,7 +60,7 @@ renderCart();
 
 function renderCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
-    
+
     cartItems.innerHTML = "";
 
     cart.forEach(product => {
@@ -108,4 +108,21 @@ cartItems.addEventListener("click", event => {
     }
 
     renderCart();
+});
+
+const orderForm = document.querySelector("#order-form");
+const orderMessage = document.querySelector("#order-message");
+
+orderForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    orderMessage.textContent = "Заказ создан!";
+
+    cart = [];
+
+    localStorage.removeItem("cart");
+
+    renderCart();
+
+    orderForm.reset();
 });

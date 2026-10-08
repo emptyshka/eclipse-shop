@@ -69,6 +69,42 @@
 
             <p id="cart-total">Итого: 0 ₽</p>
         </section>
+
+        <section id="order">
+            <h2>Оформление заказа</h2>
+
+            <form id="order-form">
+                <label>
+                    Имя
+                    <input type="text" name="firstName" required>
+                </label>
+
+                <label>
+                    Фамилия
+                    <input type="text" name="lastName" required>
+                </label>
+
+                <label>
+                    Адрес
+                    <input type="text" name="address" required>
+                </label>
+
+                <label>
+                    Телефон
+                    <input
+                        type="tel"
+                        name="phone"
+                        placeholder="+7 (999) 123-45-67"
+                        pattern="\+7\s?\(?\d{3}\)?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}"
+                        required
+                    >
+                </label>
+
+                <button type="submit">Оформить заказ</button>
+            </form>
+
+            <p id="order-message"></p>
+        </section>
     </main>
 
     <script src="script.js"></script>
