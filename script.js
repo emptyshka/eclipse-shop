@@ -1,31 +1,3 @@
-const products = [
-    {
-        id: 1,
-        name: "Ветровка ECLIPSE",
-        price: 4880
-    },
-    {
-        id: 2,
-        name: "Штаны ECLIPSE",
-        price: 3570
-    },
-    {
-        id: 3,
-        name: "Худи ECLIPSE",
-        price: 2990
-    },
-    {
-        id: 4,
-        name: "Кепка ECLIPSE",
-        price: 1660
-    },
-    {
-        id: 5,
-        name: "Носки ECLIPSE",
-        price: 1111
-    }
-];
-
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 const buttons = document.querySelectorAll(".add-to-cart");
@@ -66,21 +38,30 @@ renderCart();
 function renderCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    cartItems.innerHTML = "";
+    cartItems.replaceChildren();
 
     cart.forEach(product => {
         const item = document.createElement("div");
         item.className = "cart-item";
 
-        item.innerHTML = `
-            <p>${product.name}</p>
-            ${product.color ? `<p>Цвет: ${product.color === "black" ? "чёрный" : "серый"}</p>` : ""}
-            <p>${product.price} ₽ × ${product.quantity}</p>
+        const name = document.createElement("p");
+        name.textContent = product.name;
+        item.appendChild(name);
 
-            <button class="decrease" data-id="${product.id}">−</button>
-            <button class="increase" data-id="${product.id}">+</button>
-            <button class="remove" data-id="${product.id}">Удалить</button>
-        `;
+        if (product.color) {
+            const color = document.createElement("p");
+            color.textContent = `Цвет: ${product.color === "black" ? "чёрный" : "серый"}`;
+            item.appendChild(color);
+        }
+
+        const price = document.createElement("p");
+        price.textContent = `${product.price} ₽ × ${product.quantity}`;
+        item.appendChild(price);
+
+        const decreaseButton = createCartButton("decrease", "−", product);
+        const increaseButton = createCartButton("increase", "+", product);
+        const removeButton = createCartButton("remove", "Удалить", product);
+        item.append(decreaseButton, increaseButton, removeButton);
 
         cartItems.appendChild(item);
     });
@@ -93,24 +74,46 @@ function renderCart() {
     document.querySelector("#cart-total").textContent = `Итого: ${total} ₽`;
 }
 
-cartItems.addEventListener("click", event => {
-    const productId = Number(event.target.dataset.id);
-    const product = cart.find(item => item.id === productId);
+function createCartButton(className, text, product) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = className;
+    button.textContent = text;
+    button.dataset.id = product.id;
+    if (product.color) {
+        button.dataset.color = product.color;
+    }
+    return button;
+}
 
-    if (event.target.classList.contains("increase")) {
+cartItems.addEventListener("click", event => {
+    const button = event.target.closest("button");
+    if (!button || !cartItems.contains(button)) {
+        return;
+    }
+
+    const productId = Number(button.dataset.id);
+    const product = cart.find(item =>
+        item.id === productId && item.color === button.dataset.color
+    );
+    if (!product) {
+        return;
+    }
+
+    if (button.classList.contains("increase")) {
         product.quantity += 1;
     }
 
-    if (event.target.classList.contains("decrease")) {
+    if (button.classList.contains("decrease")) {
         product.quantity -= 1;
 
         if (product.quantity === 0) {
-            cart = cart.filter(item => item.id !== productId);
+            cart = cart.filter(item => item !== product);
         }
     }
 
-    if (event.target.classList.contains("remove")) {
-        cart = cart.filter(item => item.id !== productId);
+    if (button.classList.contains("remove")) {
+        cart = cart.filter(item => item !== product);
     }
 
     renderCart();
@@ -151,25 +154,6 @@ colorButtons.forEach(button => {
         });
 
         button.classList.add("active");
-
-        const imageNames = {
-            1: {
-                black: "windbreaker_black.PNG",
-                grey: "windbreaker_grey.PNG"
-            },
-            2: {
-                black: "pants_black.PNG",
-                grey: "pants_grey.PNG"
-            },
-            3: {
-                black: "hoodie_black.PNG",
-                grey: "hoodie_grey.PNG"
-            },
-            4: {
-                black: "cap_black.PNG",
-                grey: "cap_grey.PNG"
-            }
-        };
 
         const productId = productCard.dataset.id;
 
